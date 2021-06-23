@@ -1,0 +1,49 @@
+cache tiling:
+Dram is slow:
+	It would be nice if we had a way to gurantee something is in the cache
+	Fewer memory related stalls, more computation/unit time.
+	
+Solution?
+	*shared memory ( scratchpad memory) : it is user managed L1 cache.
+	What is user managed? : this means that the programmer loads value directly in the shaderd memory 
+	So that it just takes five 10 cyccles memory rather than it would go to dram.
+	
+	Private per-threadblock.
+	The other very nice thing about using cache memory is that when we have a large input, the entire input will
+	not fit in the cache. Let's only put the pieces of large input were using right now in the cache.
+	
+	Tiled Matrix multiplication.
+	A*B=C
+	we will have  each thread calculate a single element within the C Matrix. Everythread is going to calculate one element
+	within the c-matrix. But now instead of 
+	sweeping across 
+	all A at a time, It is now going to sweep at the subset of A and that subset of A is going to be a tile.
+	Every loop iteration will progress the tile by it's tile size.
+	In our case we are going to be doing simply An integer number of loops that perfectly lands with the square matrix will be a power
+	of 2 and our matrix size will also be a power of 2 and we make sure we divide it perfectoly
+	
+	How does this differ.
+	So previously when we were calculating values we didn't have to worry about what values we were using at that exact moment 
+	because we didn't care about latency.
+	Now with shared memory it is programmer managed . So on each tile on each iteration, we are going to need to load the value
+	of Column block of matrix A --------------------- with row block of matrix B -
+																				 -
+																				 -
+																				 -
+	Into our shared memory when we are loading from A we need to see that it is a constant row and we need threads here.
+	As we progress along the row doesn't change the column changes. Because the tile are moving downward along the tile matrix
+	We are going to have a constant column but a loop varying row.
+	
+	
+	
+	Our actual calculation looks like A[y][k]* B[k][x]= Row is loop invariant for A
+	Column is loop invariant for B
+	
+	Becuase we are loading everything into these tile . The tile in this case are proxy for thread block. 
+	A tile in our case will be 16 thread by 16 thread. We are taking a large input and reducing it to size of iteration.
+	
+	
+	
+	
+	
+	
